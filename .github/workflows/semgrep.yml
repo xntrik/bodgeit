@@ -1,6 +1,8 @@
 name: semgrep
 on:
   pull_request: {}
+
+  # Scan all files on branches, block on any issues
   push:
     branches: ["master", "main"]
 
@@ -19,5 +21,12 @@ jobs:
 
       - uses: returntocorp/semgrep-action@v1
         with:
+          generateSarif: "1"
           config: >- # more at semgrep.dev/explore
             p/r2c
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: semgrep.sarif
+        if: always()
